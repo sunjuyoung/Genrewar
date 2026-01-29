@@ -1,0 +1,107 @@
+spring:
+  application:
+    name: doublecross
+
+  # 프로필 설정
+#  profiles:
+#    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # 데이터소스 설정 (PostgreSQL)
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5433/doublecross}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    show-sql: ${JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_batch_fetch_size: 100
+    open-in-view: false
+    defer-datasource-initialization: true
+
+  # SQL 초기화 설정
+  sql:
+    init:
+      mode: ${SQL_INIT_MODE:never}
+      encoding: UTF-8
+
+  # Redis 설정
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: -1ms
+
+  # Spring AI (OpenAI) 설정
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: ${OPENAI_MODEL:gpt-4o-mini}
+          temperature: 0.7
+          max-tokens: 1000
+
+  # Jackson 설정
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      indent-output: true
+    deserialization:
+      fail-on-unknown-properties: false
+    default-property-inclusion: non_null
+    time-zone: Asia/Seoul
+
+# 서버 설정
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain
+
+# 로깅 설정
+logging:
+  level:
+    root: INFO
+    com.example.doublecross: ${LOG_LEVEL:DEBUG}
+    org.springframework.web: INFO
+    org.springframework.messaging: INFO
+    org.hibernate.SQL: ${HIBERNATE_LOG_LEVEL:DEBUG}
+    org.hibernate.type.descriptor.sql.BasicBinder: ${HIBERNATE_LOG_LEVEL:TRACE}
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# 게임 설정
+game:
+  default:
+    max-turns: 10
+    turn-time-limit: 90
+    guesses-remaining: 3
+  score:
+    guess-correct: 5
+    guess-wrong: -1
+    digest-success: 2
+    genre-win: 10
+    genre-bonus: 5
+    genre-bonus-threshold: 70.0
